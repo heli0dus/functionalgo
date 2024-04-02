@@ -9,6 +9,7 @@ type Node[T comparable] struct {
 // ForwardList представляет собой односвязный список.
 type ForwardList[T comparable] struct {
 	Head *Node[T]
+	Tail *Node[T]
 }
 
 // NewForwardList создает новый пустой список.
@@ -16,10 +17,15 @@ func NewForwardList[T comparable]() *ForwardList[T] {
 	return &ForwardList[T]{}
 }
 
-// PushFront добавляет новый элемент в начало списка.
-func (fl *ForwardList[T]) PushFront(value T) {
-	newNode := &Node[T]{Value: value, Next: fl.Head}
-	fl.Head = newNode
+// Push добавляет новый элемент в конец списка.
+func (fl *ForwardList[T]) Push(value T) {
+	if fl.Head == nil {
+		fl.Head = &Node[T]{Value: value}
+		fl.Tail = fl.Head
+		return
+	}
+	fl.Tail.Next = &Node[T]{Value: value}
+	fl.Tail = fl.Tail.Next
 }
 
 // Find ищет первый элемент со значением, равным указанному, и возвращает его.
@@ -55,7 +61,7 @@ func Fmap[T comparable, V comparable](fl *ForwardList[T], f func(T) V) *ForwardL
 
 	for current := fl.Head; current != nil; current = current.Next {
 		transformedValue := f(current.Value)
-		newList.PushFront(transformedValue)
+		newList.Push(transformedValue)
 	}
 
 	return newList
@@ -69,4 +75,20 @@ func Reduce[T comparable, V comparable](fl *ForwardList[T], initial V, f func(V,
 	}
 
 	return result
+}
+
+func fromSlice[T comparable](s []T) *ForwardList[T] {
+	list := NewForwardList[T]()
+	for i := 0; i < len(s); i++ {
+		list.Push(s[i])
+	}
+	return list
+}
+
+func (fl *ForwardList[T]) toSlice() []T {
+	var slice []T
+	for current := fl.Head; current != nil; current = current.Next {
+		slice = append(slice, current.Value)
+	}
+	return slice
 }
