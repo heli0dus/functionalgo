@@ -1,4 +1,4 @@
-package collections
+package forwardList
 
 // Node представляет собой узел в списке.
 type Node[T comparable] struct {
@@ -68,6 +68,5 @@ func Reduce[T comparable, V comparable](fl *ForwardList[T], initial V, f func(V,
 		result = f(result, current.Value)
 	}
 
-	// Возвращаем итоговое значение
 	return result
 }
