@@ -1,15 +1,16 @@
 package stream
 
-import "reflect"
-
-type Error struct{}
+import (
+	"fmt"
+	"reflect"
+)
 
 type Stream struct {
 	slice    interface{}
 	value    reflect.Value
 	elemType reflect.Type
 	len      int
-	err      *Error
+	err      error
 }
 
 type Streamable[T any] interface {
@@ -25,7 +26,15 @@ func AsStream[T any](slice []T) Stream {
 	return s
 }
 
-func AsSlice[T any](s Stream) []T {
-	// TODO: add type check
-	return s.slice.([]T)
+func AsSlice[T any](s Stream) ([]T, error) {
+	if s.err != nil {
+		return nil, s.err
+	}
+	var zero [0]T
+	fmt.Println(reflect.TypeOf(zero).Elem())
+	fmt.Println(s.elemType)
+	if reflect.TypeOf(zero).Elem() != s.elemType {
+		return nil, fmt.Errorf("cannot convert stream of %v to []%v", s.elemType, reflect.TypeOf(zero).Elem())
+	}
+	return s.slice.([]T), nil
 }
