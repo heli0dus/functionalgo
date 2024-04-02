@@ -25,19 +25,19 @@ func (s Stream) Reduce(f interface{}, init interface{}) Stream {
 	// TODO: this check can be less strict
 	if fType.Out(0) != fType.In(0) {
 		// TODO: better error message with actual types
-		return s.Error(fmt.Errorf("1 type mismatch in reduce"))
+		return s.Error(fmt.Errorf("type mismatch in reduce"))
 	}
 
 	// TODO: this check can be less strict
 	if fType.In(0) != reflect.TypeOf(init) {
 		// TODO: better error message with actual types
-		return s.Error(fmt.Errorf("2 type mismatch in reduce"))
+		return s.Error(fmt.Errorf("type mismatch in reduce"))
 	}
 
 	// TODO: this check can be less strict
 	if fType.In(1) != s.elemType {
 		// TODO: better error message with actual types
-		return s.Error(fmt.Errorf("3 type mismatch in reduce"))
+		return s.Error(fmt.Errorf("type mismatch in reduce"))
 	}
 
 	res := reflect.MakeSlice(reflect.SliceOf(reflect.TypeOf(f).Out(0)), 0, 1)
