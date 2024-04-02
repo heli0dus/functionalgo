@@ -49,3 +49,25 @@ func (fl *ForwardList[T]) Delete(value T) {
 		}
 	}
 }
+
+func Fmap[T comparable, V comparable](fl *ForwardList[T], f func(T) V) *ForwardList[V] {
+	newList := NewForwardList[V]()
+
+	for current := fl.Head; current != nil; current = current.Next {
+		transformedValue := f(current.Value)
+		newList.PushFront(transformedValue)
+	}
+
+	return newList
+}
+
+func Reduce[T comparable, V comparable](fl *ForwardList[T], initial V, f func(V, T) V) V {
+	result := initial
+
+	for current := fl.Head; current != nil; current = current.Next {
+		result = f(result, current.Value)
+	}
+
+	// Возвращаем итоговое значение
+	return result
+}
