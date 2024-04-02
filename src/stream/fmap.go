@@ -20,7 +20,7 @@ func (s Stream) Fmap(f interface{}) Stream {
 	// param type check
 	if fType.NumIn() != 1 {
 		// TODO: better error message with actual types
-		return s.Error(fmt.Errorf("function used in fmap must recieve 1 argument"))
+		return s.Error(fmt.Errorf("function used in fmap must receive 1 argument"))
 	}
 	if fType.In(0) != s.elemType {
 		// TODO: better error message with actual types
