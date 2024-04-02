@@ -30,11 +30,8 @@ func AsSlice[T any](s Stream) ([]T, error) {
 	if s.err != nil {
 		return nil, s.err
 	}
-	var zero [0]T
-	fmt.Println(reflect.TypeOf(zero).Elem())
-	fmt.Println(s.elemType)
-	if reflect.TypeOf(zero).Elem() != s.elemType {
-		return nil, fmt.Errorf("cannot convert stream of %v to []%v", s.elemType, reflect.TypeOf(zero).Elem())
+	if reflect.TypeOf((*T)(nil)).Elem() != s.elemType {
+		return nil, fmt.Errorf("cannot convert stream of %v to []%v", s.elemType, reflect.TypeOf((*T)(nil)).Elem())
 	}
 	return s.slice.([]T), nil
 }
