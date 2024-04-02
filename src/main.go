@@ -1,29 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
 
-type ArrayList[T any, V any] []T
-
-func (arr ArrayList[T, V]) fmap(f func(T) V) []V {
-	res := make([]V, 0, len(arr))
-	for _, val := range arr {
-		res = append(res, f(val))
-	}
-
-	return res
-}
-
-func id[T any](x T) T {
-	return x
-}
-
-func toString(x int) string {
-	return fmt.Sprintf("%d", x)
-}
+	"github.com/heli0dus/functionalgo/src/stream"
+)
 
 func main() {
-	a := make([]int, 10)
-	var arr ArrayList[int, string] = a
-	brr := (ArrayList[int, string])(a).fmap(toString)
-	var _ []string = brr
+	slice := []int{1, 2, 3}
+	newSlice := stream.AsSlice[float32](stream.AsStream(slice).Fmap(func(v int) float32 { return float32(v) / 2 }))
+	fmt.Println(len(newSlice))
+	for i := 0; i < len(newSlice); i++ {
+		fmt.Println(newSlice[i])
+	}
 }
