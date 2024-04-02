@@ -1,29 +1,108 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
 
-type ArrayList[T any, V any] []T
+	"github.com/heli0dus/functionalgo/src/stream"
+)
 
-func (arr ArrayList[T, V]) fmap(f func(T) V) []V {
-	res := make([]V, 0, len(arr))
-	for _, val := range arr {
-		res = append(res, f(val))
+func testFmapOk() {
+	slice := []int{1, 2, 3}
+	newSlice, err := stream.AsSlice[float32](stream.AsStream(slice).Fmap(func(v int) float32 { return float32(v) / 2 }))
+	if err != nil {
+		fmt.Println(err.Error())
+		panic("testFmapOk failed")
+	} else {
+		fmt.Println(len(newSlice))
+		for i := 0; i < len(newSlice); i++ {
+			fmt.Print(newSlice[i], " ")
+		}
+		fmt.Println()
 	}
-
-	return res
 }
 
-func id[T any](x T) T {
-	return x
+func testFmapOkWithErr() {
+	slice := []int{1, 2, 3}
+	newSlice, err := stream.AsSlice[float32](stream.AsStream(slice).Fmap(func(v int) (float32, error) { return float32(v) / 2, nil }))
+	if err != nil {
+		fmt.Println(err.Error())
+		panic("testFmapWrongCast failed")
+	} else {
+		fmt.Println(len(newSlice))
+		for i := 0; i < len(newSlice); i++ {
+			fmt.Print(newSlice[i], " ")
+		}
+		fmt.Println()
+	}
 }
 
-func toString(x int) string {
-	return fmt.Sprintf("%d", x)
+func testFmapWrongNumberOfArgs() {
+	slice := []int{1, 2, 3}
+	_, err := stream.AsSlice[float32](stream.AsStream(slice).Fmap(func(v int, x int) float32 { return float32(v+x) / 2 }))
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		panic("testFmapWrongNumberOfArgs failed")
+	}
+}
+
+func testFmapWrongTypeOfArg() {
+	slice := []int{1, 2, 3}
+	_, err := stream.AsSlice[float32](stream.AsStream(slice).Fmap(func(v float32) float32 { return float32(v) / 2 }))
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		panic("testFmapWrongTypeOfArg failed")
+	}
+}
+
+func testFmapWrongNumberOfReturnValues() {
+	slice := []int{1, 2, 3}
+	_, err := stream.AsSlice[float32](stream.AsStream(slice).Fmap(func(v int) (float32, int, int) { return float32(v) / 2, 1, 2 }))
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		panic("testFmapWrongNumberOfReturnValues failed")
+	}
+}
+
+func testFmapWrongReturnType() {
+	slice := []int{1, 2, 3}
+	_, err := stream.AsSlice[float32](stream.AsStream(slice).Fmap(func(v int) (float32, int) { return float32(v) / 2, 1 }))
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		panic("testFmapWrongReturnType failed")
+	}
+}
+
+func testFmapWrongCast() {
+	slice := []int{1, 2, 3}
+	_, err := stream.AsSlice[int](stream.AsStream(slice).Fmap(func(v int) float32 { return float32(v) / 2 }))
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		panic("testFmapWrongCast failed")
+	}
+}
+
+func testFmapErr() {
+	slice := []int{1, 2, 3}
+	_, err := stream.AsSlice[float32](stream.AsStream(slice).Fmap(func(v int) (float32, error) { return 0.0, fmt.Errorf("custom error") }))
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		panic("testFmapErr failed")
+	}
 }
 
 func main() {
-	a := make([]int, 10)
-	var arr ArrayList[int, string] = a
-	brr := (ArrayList[int, string])(a).fmap(toString)
-	var _ []string = brr
+	testFmapOk()
+	testFmapOkWithErr()
+	testFmapWrongNumberOfArgs()
+	testFmapWrongTypeOfArg()
+	testFmapWrongNumberOfReturnValues()
+	testFmapWrongReturnType()
+	testFmapWrongCast()
+	testFmapErr()
 }
