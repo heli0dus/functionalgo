@@ -10,6 +10,8 @@ func (s Stream) Fmap(f interface{}) Stream {
 		args := append([]reflect.Value{}, s.value.Index(i))
 		res = reflect.Append(res, reflect.ValueOf(f).Call(args)[0])
 	}
+	s.elemType = res.Type().Elem()
+	s.value = res
 	s.slice = res.Interface()
 	return s
 }
