@@ -66,6 +66,7 @@ func AsOr[T any](s Stream, def T) T {
 		return def
 	}
 	return s.slice.([]T)[0]
+}
 
 func (s Stream) Valid() bool {
 	return s.err != nil
