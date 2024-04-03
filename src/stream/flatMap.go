@@ -13,7 +13,7 @@ func (s Stream) FlatMap(f interface{}) Stream {
 
 	// return type check
 	// TODO: rewrite with lines of sane length
-	if !((fType.NumOut() == 1 && fType.Out(0).Kind() == reflect.Slice) || (fType.NumOut() == 2 && fType.Out(1).Kind() == reflect.Slice && fType.Out(1).Implements(reflect.TypeOf((*error)(nil)).Elem()))) {
+	if !((fType.NumOut() == 1 && fType.Out(0).Kind() == reflect.Slice) || (fType.NumOut() == 2 && fType.Out(0).Kind() == reflect.Slice && fType.Out(1).Implements(reflect.TypeOf((*error)(nil)).Elem()))) {
 		// TODO: better error message with actual types
 		return s.Error(fmt.Errorf("function used in FlatMap must return slice or (slice, error)"))
 	}
