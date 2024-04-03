@@ -35,3 +35,7 @@ func AsSlice[T any](s Stream) ([]T, error) {
 	}
 	return s.slice.([]T), nil
 }
+
+func (s Stream) Valid() bool {
+	return s.err != nil
+}

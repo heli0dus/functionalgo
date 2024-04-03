@@ -6,8 +6,7 @@ import (
 )
 
 func (s Stream) Reduce(f interface{}, init interface{}) Stream {
-	// TODO: replace with s.Valid()
-	if s.err != nil {
+	if !s.Valid() {
 		return s
 	}
 
