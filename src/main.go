@@ -34,11 +34,11 @@ func main() {
 	}
 	s := stream.AsStream(coolNumbers)
 	s = s.Fmap(strconv.Atoi).Filter(isEven).Fmap(square).Reduce(add, 0)
-	res, err := stream.AsSlice[int](s)
+	res, err := stream.As[int](s)
 	if err != nil {
 		fmt.Printf("error: %v", err.Error())
 		os.Exit(1)
 	}
 	// correct answer is 445464
-	fmt.Printf("sum of squares of even numbers: %v\n", res[0])
+	fmt.Printf("sum of squares of even numbers: %v\n", res)
 }
