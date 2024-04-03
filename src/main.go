@@ -33,10 +33,14 @@ func main() {
 		"12",
 	}
 	s := stream.AsStream(coolNumbers)
-	s = s.Fmap(strconv.Atoi).Filter(isEven).Fmap(square).Reduce(add, 0)
+	s = s.
+		Fmap(strconv.Atoi).
+		Filter(isEven).
+		Fmap(square).
+		Reduce(add, 0)
 	res, err := stream.As[int](s)
 	if err != nil {
-		fmt.Printf("error: %v", err.Error())
+		fmt.Printf("error: %v\n", err.Error())
 		os.Exit(1)
 	}
 	// correct answer is 445464
