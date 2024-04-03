@@ -69,6 +69,5 @@ func AsOr[T any](s Stream, def T) T {
 }
 
 func (s Stream) Valid() bool {
-	return s.err != nil
-
+	return s.err == nil
 }
