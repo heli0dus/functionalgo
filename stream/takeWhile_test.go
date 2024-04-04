@@ -39,6 +39,6 @@ func TestTakeWhileRegular(t *testing.T) {
 	} else if len(newSlice) != 1 {
 		t.Errorf("expected one return value, but got: %v", len(newSlice))
 	} else if newSlice[0] != 1 {
-		t.Errorf("unexpected value of first elemnt of slice. expected 1, but got %v", newSlice[0])
+		t.Errorf("unexpected value of first element of slice. expected 1, but got %v", newSlice[0])
 	}
 }
