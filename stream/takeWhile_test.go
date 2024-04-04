@@ -1,6 +1,9 @@
 package stream
 
-import "testing"
+import (
+	"slices"
+	"testing"
+)
 
 func TestTakeWhileConstTrue(t *testing.T) {
 	slice := []int{1, 2, 3}
@@ -10,8 +13,8 @@ func TestTakeWhileConstTrue(t *testing.T) {
 
 	if err != nil {
 		t.Errorf("expected no error, but got: %v", err.Error())
-	} else if len(newSlice) != 3 {
-		t.Errorf("expected one return value, but got: %v", len(newSlice))
+	} else if !slices.Equal(slice, newSlice) {
+		t.Errorf("expected %v, but got: %v", slice, newSlice)
 	}
 }
 
@@ -24,7 +27,7 @@ func TestTakeWhileConstFalse(t *testing.T) {
 	if err != nil {
 		t.Errorf("expected no error, but got: %v", err.Error())
 	} else if len(newSlice) != 0 {
-		t.Errorf("expected one return value, but got: %v", len(newSlice))
+		t.Errorf("expected empty result, but got: %v", newSlice)
 	}
 }
 
