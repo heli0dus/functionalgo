@@ -16,12 +16,12 @@ func (s Stream) Reduce(f interface{}, init interface{}) Stream {
 		return s.Error(fmt.Errorf("in Reduce expected function, but got %v", fType))
 	}
 
-	if !(fType.NumOut() == 1 || (fType.NumOut() == 2 && fType.Out(1).Implements(reflect.TypeOf((*error)(nil)).Elem()))) {
+	if !(fType.NumOut() == 1 || (fType.NumOut() == 2 && fType.Out(1).Implements(reflect.TypeFor[error]()))) {
 		return s.Error(fmt.Errorf("function used in Reduce must return value or (value, error)"))
 	}
 
 	if fType.NumIn() != 2 {
-		return s.Error(fmt.Errorf("function used in reduce must receive 2 arguments"))
+		return s.Error(fmt.Errorf("function used in Reduce must receive 2 arguments"))
 	}
 
 	if fType.Out(0) != fType.In(0) {
@@ -39,8 +39,7 @@ func (s Stream) Reduce(f interface{}, init interface{}) Stream {
 	res := reflect.MakeSlice(reflect.SliceOf(reflect.TypeOf(f).Out(0)), 0, 1)
 	res = reflect.Append(res, reflect.ValueOf(init))
 	for i := 0; i < s.len; i++ {
-		args := append([]reflect.Value{}, res.Index(0), s.value.Index(i))
-		newVals := reflect.ValueOf(f).Call(args)
+		newVals := reflect.ValueOf(f).Call([]reflect.Value{res.Index(0), s.value.Index(i)})
 		if len(newVals) == 2 && !newVals[1].IsNil() {
 			return s.Error(newVals[1].Interface().(error))
 		}
