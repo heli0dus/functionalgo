@@ -19,16 +19,13 @@ func (s Stream) DropWhile(f interface{}) Stream {
 		(funcType.NumOut() == 1 ||
 			(funcType.NumOut() == 2 &&
 				funcType.Out(1).Implements(reflect.TypeFor[error]())))) {
-		// TODO: better error message with actual types
-		return s.Error(fmt.Errorf("function used in `DropWhile` must return bool or (bool, error)"))
+		return s.Error(fmt.Errorf("function used in DropWhile must return bool or (bool, error)"))
 	}
 
 	if funcType.NumIn() != 1 {
-		// TODO: better error message with actual types
-		return s.Error(fmt.Errorf("function used in `DropWhile` must receive 1 argument"))
+		return s.Error(fmt.Errorf("function used in DropWhile must receive 1 argument"))
 	}
 	if funcType.In(0) != s.elemType {
-		// TODO: better error message with actual types
 		return s.Error(fmt.Errorf("type of argument 1 in function must be the same as element type of a stream"))
 	}
 
