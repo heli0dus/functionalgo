@@ -27,8 +27,7 @@ func AsStream[T any](slice []T) Stream {
 }
 
 func AsSlice[T any](s Stream) ([]T, error) {
-	// TODO: replace with s.Valid()
-	if s.err != nil {
+	if !s.Valid() {
 		return nil, s.err
 	}
 	if reflect.TypeOf((*T)(nil)).Elem() != s.elemType {
@@ -38,8 +37,7 @@ func AsSlice[T any](s Stream) ([]T, error) {
 }
 
 func As[T any](s Stream) (T, error) {
-	// TODO: replace with s.Valid()
-	if s.err != nil {
+	if !s.Valid() {
 		var t T
 		return t, s.err
 	}
@@ -55,8 +53,7 @@ func As[T any](s Stream) (T, error) {
 }
 
 func AsOr[T any](s Stream, def T) T {
-	// TODO: replace with s.Valid()
-	if s.err != nil {
+	if !s.Valid() {
 		return def
 	}
 	if reflect.TypeOf((*T)(nil)).Elem() != s.elemType {
