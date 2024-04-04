@@ -3,6 +3,7 @@ package stream
 import (
 	"fmt"
 	"slices"
+	"strings"
 	"testing"
 )
 
@@ -93,5 +94,25 @@ func TestFlatMapErr(t *testing.T) {
 		t.Errorf("expected error, but got none")
 	} else if err.Error() != "custom error" {
 		t.Errorf("expected error '%v', but got '%v'", "custom error", err.Error())
+	}
+}
+
+func TestFlatMapNotFunc(t *testing.T) {
+	slice := []string{"42", "1337", "69"}
+	_, err := AsSlice[rune](AsStream(slice).FlatMap(1))
+	if err == nil {
+		t.Errorf("expected error, but got none")
+	} else {
+		t.Log(err.Error())
+	}
+}
+
+var coolNumbers = []string{"42", "69", "13", "666", "1337", "1", "0", "-5", "12"}
+
+func BenchmarkStreamFlatMap(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		f := func(s string) []string { return strings.Split(s, " ") }
+		s := AsStream(coolNumbers)
+		s = s.FlatMap(f)
 	}
 }
