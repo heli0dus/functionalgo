@@ -9,9 +9,15 @@ func (s Stream) Filter(f interface{}) Stream {
 	if !s.Valid() {
 		return s
 	}
+
 	fType := reflect.TypeOf(f)
+
+	if fType.Kind() != reflect.Func {
+		return s.Error(fmt.Errorf("in Filter expected function, but got %v", fType))
+	}
+
 	// return type check
-	if !(fType.Out(0).Kind() == reflect.Bool && (fType.NumOut() == 1 || (fType.NumOut() == 2 && fType.Out(1).Implements(reflect.TypeOf((*error)(nil)).Elem())))) {
+	if !(fType.Out(0).Kind() == reflect.Bool && (fType.NumOut() == 1 || (fType.NumOut() == 2 && fType.Out(1).Implements(reflect.TypeFor[error]())))) {
 		// TODO: better error message with actual types
 		return s.Error(fmt.Errorf("function used in filter must return bool or (bool, error)"))
 	}
@@ -26,21 +32,30 @@ func (s Stream) Filter(f interface{}) Stream {
 		return s.Error(fmt.Errorf("type of argument 1 in function must be the same as element type of a stream"))
 	}
 
-	res := reflect.MakeSlice(reflect.SliceOf(s.elemType), 0, 0)
-	newLen := 0
-	for i := 0; i < s.len; i++ {
-		args := append([]reflect.Value{}, s.value.Index(i))
-		newVals := reflect.ValueOf(f).Call(args)
-		if len(newVals) == 2 && !newVals[1].IsNil() {
-			return s.Error(newVals[1].Interface().(error))
+	res := reflect.MakeSlice(reflect.SliceOf(s.elemType), s.len, s.len)
+	resI := 0
+	if fType.NumOut() == 1 {
+		for i := 0; i < s.len; i++ {
+			newVals := reflect.ValueOf(f).Call([]reflect.Value{s.value.Index(i)})
+			if newVals[0].Bool() {
+				res.Index(resI).Set(s.value.Index(i))
+				resI++
+			}
 		}
-		if newVals[0].Bool() {
-			res = reflect.Append(res, s.value.Index(i))
-			newLen++
+	} else {
+		for i := 0; i < s.len; i++ {
+			newVals := reflect.ValueOf(f).Call([]reflect.Value{s.value.Index(i)})
+			if !newVals[1].IsNil() {
+				return s.Error(newVals[1].Interface().(error))
+			}
+			if newVals[0].Bool() {
+				res.Index(resI).Set(s.value.Index(i))
+				resI++
+			}
 		}
 	}
-	s.len = newLen
-	s.elemType = res.Type().Elem()
+	res.Slice(0, resI)
+	s.len = resI
 	s.value = res
 	s.slice = res.Interface()
 	return s
