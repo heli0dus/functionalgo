@@ -51,7 +51,7 @@ func (s Stream) Filter(f interface{}) Stream {
 			}
 		}
 	}
-	res.Slice(0, resI)
+	res = res.Slice(0, resI)
 	s.len = resI
 	s.value = res
 	s.slice = res.Interface()
