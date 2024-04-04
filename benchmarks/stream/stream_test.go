@@ -1,9 +1,10 @@
 package stream
 
 import (
-	"github.com/heli0dus/functionalgo/src/stream"
 	"strconv"
 	"testing"
+
+	"github.com/heli0dus/functionalgo/stream"
 )
 
 // Re-implementing isEven, square, and add for completeness
