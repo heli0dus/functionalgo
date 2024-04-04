@@ -85,8 +85,10 @@ func BenchmarkStream(b *testing.B) {
 }
 
 func BenchmarkStreamFilterOnly(b *testing.B) {
+	s := stream.AsStream(coolNumbers)
+	s = s.Fmap(strconv.Atoi)
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		s := stream.AsStream(coolNumbers)
 		s = s.Filter(isEven)
 	}
 }
@@ -98,8 +100,10 @@ func BenchmarkStreamMapOnly(b *testing.B) {
 	}
 }
 func BenchmarkStreamReduceOnly(b *testing.B) {
+	s := stream.AsStream(coolNumbers)
+	s = s.Fmap(strconv.Atoi)
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		s := stream.AsStream(coolNumbers)
 		s = s.Reduce(add, 0)
 	}
 }
