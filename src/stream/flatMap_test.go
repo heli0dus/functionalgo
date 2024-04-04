@@ -97,6 +97,16 @@ func TestFlatMapErr(t *testing.T) {
 	}
 }
 
+func TestFlatMapNotFunc(t *testing.T) {
+	slice := []string{"42", "1337", "69"}
+	_, err := AsSlice[rune](AsStream(slice).FlatMap(1))
+	if err == nil {
+		t.Errorf("expected error, but got none")
+	} else {
+		t.Log(err.Error())
+	}
+}
+
 var coolNumbers = []string{"42", "69", "13", "666", "1337", "1", "0", "-5", "12"}
 
 func BenchmarkStreamFlatMap(b *testing.B) {
