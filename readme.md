@@ -37,23 +37,47 @@ FunGo - библиотека для реализации возможносте�
 go run main.go
 ```
 
-# Тесты
+Также есть еще один пример в `examples/example.go`
 
-Команда для прогона всех тестов стримов:
+# Тесты и бенчмарки
+
+Команда для прогона всех тестов:
 
 ```bash
-go test ./stream
+go test ./...
+```
+
+Команда для прогона всех бенчмарков:
+
+```bash
+go test -run ^$ -bench=. ./...
 ```
 
 # Результаты бенчмарков
 
-| Name                         | Total ops number | Ns/op       | Bytes/op  | Allocs/op     |
-|------------------------------|------------------|-------------|-----------|---------------|
-| BenchmarkClassic-8           | 127980086        | 93.61 ns/op | 56 B/op   | 3 allocs/op   |
-| BenchmarkStream-8            | 1949524          | 6158 ns/op  | 2608 B/op | 117 allocs/op |
-| BenchmarkClassicFilterOnly-8 | 127329626        | 94.33 ns/op | 56 B/op   | 3 allocs/op   |
-| BenchmarkStreamFilterOnly-8  | 11897248         | 1007 ns/op  | 376 B/op  | 20 allocs/op  |
-| BenchmarkClassicMapOnly-8    | 85813686         | 138.9 ns/op | 248 B/op  | 5 allocs/op   |
-| BenchmarkStreamMapOnly-8     | 4890870          | 2442 ns/op  | 1232 B/op | 49 allocs/op  |
-| BenchmarkClassicReduceOnly-8 | 374714445        | 32.06 ns/op | 0 B/op    | 0 allocs/op   |
-| BenchmarkStreamReduceOnly-8  | 37207575         | 323.0 ns/op | 136 B/op  | 6 allocs/op   |
+Все бенчмарки запускались командой
+
+```bash
+go test -run ^$ -bench=. -benchtime=10s -benchmem ./...
+```
+
+Бенчмарки, основанные на задаче из `main.go`:
+
+| Name                          | Total ops number | Ns/op       | Bytes/op  | Allocs/op    |
+|-------------------------------|------------------|-------------|-----------|--------------|
+| BenchmarkClassic-20           | 140920328        | 84.49 ns/op | 56 B/op   | 3 allocs/op  |
+| BenchmarkStream-20            | 2385086          | 5034 ns/op  | 1528 B/op | 73 allocs/op |
+| BenchmarkClassicFilterOnly-20 | 146075796        | 82.07 ns/op | 56 B/op   | 3 allocs/op  |
+| BenchmarkStreamFilterOnly-20  | 16809561         | 707.1 ns/op | 180 B/op  | 11 allocs/op |
+| BenchmarkClassicMapOnly-20    | 82648896         | 138.1 ns/op | 248 B/op  | 5 allocs/op  |
+| BenchmarkStreamMapOnly-20     | 5971581          | 2023 ns/op  | 800 B/op  | 31 allocs/op |
+| BenchmarkClassicReduceOnly-20 | 465145737        | 25.82 ns/op | 0 B/op    | 0 allocs/op  |
+| BenchmarkStreamReduceOnly-20  | 38740669         | 306.0 ns/op | 88 B/op   | 5 allocs/op  |
+
+
+Бенчмарки, основанные на задаче из `examples/example.go`
+
+| Name                | Total ops number | Ns/op         | Bytes/op    | Allocs/op       |
+|---------------------|------------------|---------------|-------------|-----------------|
+| BenchmarkStreams-20 | 9559             | 1193236 ns/op | 326055 B/op | 17273 allocs/op |
+| BenchmarkClassic-20 | 180752           | 67236 ns/op   | 136991 B/op | 1589 allocs/op  |
