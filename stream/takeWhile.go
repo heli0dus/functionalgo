@@ -9,6 +9,7 @@ func (s Stream) TakeWhile(f interface{}) Stream {
 	if !s.Valid() {
 		return s
 	}
+
 	fType := reflect.TypeOf(f)
 
 	if fType.Kind() != reflect.Func {
@@ -19,26 +20,22 @@ func (s Stream) TakeWhile(f interface{}) Stream {
 	if !(fType.Out(0).Kind() == reflect.Bool &&
 		(fType.NumOut() == 1 ||
 			(fType.NumOut() == 2 &&
-				fType.Out(1).Implements(reflect.TypeOf((*error)(nil)).Elem())))) {
-		// TODO: better error message with actual types
+				fType.Out(1).Implements(reflect.TypeFor[error]())))) {
 		return s.Error(fmt.Errorf("function used in TakeWhile must return bool or (bool, error)"))
 	}
 
 	// param type check
 	if fType.NumIn() != 1 {
-		// TODO: better error message with actual types
 		return s.Error(fmt.Errorf("function used in TakeWhile must receive 1 argument"))
 	}
 	if fType.In(0) != s.elemType {
-		// TODO: better error message with actual types
 		return s.Error(fmt.Errorf("type of argument 1 in function must be the same as element type of a stream"))
 	}
 
 	newLen := 0
 	if fType.NumIn() == 1 {
 		for i := 0; i < s.len; i++ {
-			args := append([]reflect.Value{}, s.value.Index(i))
-			newVals := reflect.ValueOf(f).Call(args)
+			newVals := reflect.ValueOf(f).Call([]reflect.Value{s.value.Index(i)})
 			if newVals[0].Bool() {
 				newLen++
 			} else {
@@ -47,8 +44,7 @@ func (s Stream) TakeWhile(f interface{}) Stream {
 		}
 	} else {
 		for i := 0; i < s.len; i++ {
-			args := append([]reflect.Value{}, s.value.Index(i))
-			newVals := reflect.ValueOf(f).Call(args)
+			newVals := reflect.ValueOf(f).Call([]reflect.Value{s.value.Index(i)})
 			if !newVals[1].IsNil() {
 				return s.Error(newVals[1].Interface().(error))
 			}

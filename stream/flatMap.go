@@ -17,19 +17,19 @@ func (s Stream) FlatMap(f interface{}) Stream {
 	}
 
 	// return type check
-	// TODO: rewrite with lines of sane length
-	if fType.NumOut() < 1 || fType.NumOut() > 2 || fType.Out(0).Kind() != reflect.Slice || (fType.NumOut() == 2 && !fType.Out(1).Implements(reflect.TypeFor[error]())) {
-		// TODO: better error message with actual types
+	if fType.NumOut() < 1 ||
+		fType.NumOut() > 2 ||
+		fType.Out(0).Kind() != reflect.Slice ||
+		(fType.NumOut() == 2 && !fType.Out(1).Implements(reflect.TypeFor[error]())) {
+
 		return s.Error(fmt.Errorf("function used in FlatMap must return slice or (slice, error)"))
 	}
 
 	// param type check
 	if fType.NumIn() != 1 {
-		// TODO: better error message with actual types
 		return s.Error(fmt.Errorf("function used in FlatMap must receive 1 argument"))
 	}
 	if fType.In(0) != s.elemType {
-		// TODO: better error message with actual types
 		return s.Error(fmt.Errorf("type of argument 1 in function must be the same as element type of a stream"))
 	}
 

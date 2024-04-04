@@ -19,32 +19,27 @@ func (s Stream) DropWhile(f interface{}) Stream {
 		(funcType.NumOut() == 1 ||
 			(funcType.NumOut() == 2 &&
 				funcType.Out(1).Implements(reflect.TypeFor[error]())))) {
-		// TODO: better error message with actual types
-		return s.Error(fmt.Errorf("function used in `DropWhile` must return bool or (bool, error)"))
+		return s.Error(fmt.Errorf("function used in DropWhile must return bool or (bool, error)"))
 	}
 
 	if funcType.NumIn() != 1 {
-		// TODO: better error message with actual types
-		return s.Error(fmt.Errorf("function used in `DropWhile` must receive 1 argument"))
+		return s.Error(fmt.Errorf("function used in DropWhile must receive 1 argument"))
 	}
 	if funcType.In(0) != s.elemType {
-		// TODO: better error message with actual types
 		return s.Error(fmt.Errorf("type of argument 1 in function must be the same as element type of a stream"))
 	}
 
 	startFrom := 0
 	if funcType.NumIn() == 1 {
 		for ; startFrom < s.len; startFrom++ {
-			args := append([]reflect.Value{}, s.value.Index(startFrom))
-			check := reflect.ValueOf(f).Call(args)
+			check := reflect.ValueOf(f).Call([]reflect.Value{s.value.Index(startFrom)})
 			if !check[0].Bool() {
 				break
 			}
 		}
 	} else {
 		for ; startFrom < s.len; startFrom++ {
-			args := append([]reflect.Value{}, s.value.Index(startFrom))
-			check := reflect.ValueOf(f).Call(args)
+			check := reflect.ValueOf(f).Call([]reflect.Value{s.value.Index(startFrom)})
 			if !check[1].IsNil() {
 				return s.Error(check[1].Interface().(error))
 			}

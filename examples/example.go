@@ -7,8 +7,8 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/heli0dus/functionalgo/src/collections/hashSet"
-	"github.com/heli0dus/functionalgo/src/stream"
+	"github.com/heli0dus/functionalgo/collections/hashSet"
+	"github.com/heli0dus/functionalgo/stream"
 )
 
 func split(s string) []string {

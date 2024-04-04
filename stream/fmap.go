@@ -18,17 +18,14 @@ func (s Stream) Fmap(f interface{}) Stream {
 
 	// return type check
 	if !(fType.NumOut() == 1 || (fType.NumOut() == 2 && fType.Out(1).Implements(reflect.TypeFor[error]()))) {
-		// TODO: better error message with actual types
-		return s.Error(fmt.Errorf("function used in fmap must return value or (value, error)"))
+		return s.Error(fmt.Errorf("function used in Fmap must return value or (value, error)"))
 	}
 
 	// param type check
 	if fType.NumIn() != 1 {
-		// TODO: better error message with actual types
-		return s.Error(fmt.Errorf("function used in fmap must receive 1 argument"))
+		return s.Error(fmt.Errorf("function used in Fmap must receive 1 argument"))
 	}
 	if fType.In(0) != s.elemType {
-		// TODO: better error message with actual types
 		return s.Error(fmt.Errorf("type of argument 1 in function must be the same as element type of a stream"))
 	}
 

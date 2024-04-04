@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/heli0dus/functionalgo/src/stream"
+	"github.com/heli0dus/functionalgo/stream"
 )
 
 func isEven(i int) bool {
