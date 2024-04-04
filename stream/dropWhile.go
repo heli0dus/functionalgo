@@ -32,16 +32,14 @@ func (s Stream) DropWhile(f interface{}) Stream {
 	startFrom := 0
 	if funcType.NumIn() == 1 {
 		for ; startFrom < s.len; startFrom++ {
-			args := append([]reflect.Value{}, s.value.Index(startFrom))
-			check := reflect.ValueOf(f).Call(args)
+			check := reflect.ValueOf(f).Call([]reflect.Value{s.value.Index(startFrom)})
 			if !check[0].Bool() {
 				break
 			}
 		}
 	} else {
 		for ; startFrom < s.len; startFrom++ {
-			args := append([]reflect.Value{}, s.value.Index(startFrom))
-			check := reflect.ValueOf(f).Call(args)
+			check := reflect.ValueOf(f).Call([]reflect.Value{s.value.Index(startFrom)})
 			if !check[1].IsNil() {
 				return s.Error(check[1].Interface().(error))
 			}
