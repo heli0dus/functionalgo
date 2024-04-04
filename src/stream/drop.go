@@ -2,7 +2,6 @@ package stream
 
 import (
 	"fmt"
-	"reflect"
 )
 
 func (s Stream) Drop(n int) Stream {
@@ -16,13 +15,11 @@ func (s Stream) Drop(n int) Stream {
 
 	n = min(s.len, n)
 	resSize := s.len - n
-	res := reflect.MakeSlice(reflect.SliceOf(s.elemType), 0, resSize)
 
-	for i := n; i < s.len; i++ {
-		res = reflect.Append(res, s.value.Index(i))
-	}
+	s.value = s.value.Slice(n, s.len)
+	s.slice = s.value.Interface()
+
 	s.len = resSize
-	s.value = res
-	s.slice = res.Interface()
+
 	return s
 }
