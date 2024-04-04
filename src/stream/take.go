@@ -2,12 +2,10 @@ package stream
 
 import (
 	"fmt"
-	"reflect"
 )
 
 func (s Stream) Take(n int) Stream {
-	// TODO: replace with s.Valid()
-	if s.err != nil {
+	if !s.Valid() {
 		return s
 	}
 	if n < 0 {
@@ -15,14 +13,11 @@ func (s Stream) Take(n int) Stream {
 	}
 
 	resSize := min(s.len, n)
-	res := reflect.MakeSlice(reflect.SliceOf(s.elemType), 0, resSize)
 
-	for i := 0; i < resSize; i++ {
-		res = reflect.Append(res, s.value.Index(i))
-	}
+	s.value = s.value.Slice(0, resSize)
+	s.slice = s.value.Interface()
 
 	s.len = resSize
-	s.value = res
-	s.slice = res.Interface()
+
 	return s
 }

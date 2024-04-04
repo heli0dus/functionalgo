@@ -1,6 +1,9 @@
 package stream
 
-import "testing"
+import (
+	"slices"
+	"testing"
+)
 
 func TestDrop(t *testing.T) {
 	arr := []int{1, 2, 3}
@@ -38,7 +41,6 @@ func TestDropNegative(t *testing.T) {
 
 	if err == nil {
 		t.Errorf("error expected, but got %v", nil)
-
 	}
 }
 
@@ -54,9 +56,23 @@ func TestDropZero(t *testing.T) {
 		t.Errorf("Got '%v' while expected '%v'", res[0], 0)
 	}
 
-	for i := 0; i < len(res); i++ {
-		if res[i] != arr[i] {
-			t.Errorf("Got '%v' while expected '%v'", res[i], arr[i])
+	if !slices.Equal(res, arr) {
+		t.Errorf("Got '%v' while expected '%v'", res, arr)
+	}
+}
+
+func TestDropByOne(t *testing.T) {
+	arr := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	s := AsStream(arr)
+	for i := 1; i <= len(arr); i++ {
+		s = s.Drop(1)
+		res, err := AsSlice[int](s)
+
+		if err != nil {
+			t.Errorf("error were not expected, but got %v", err.Error())
+		} else if !slices.Equal(arr[i:], res) {
+			t.Errorf("Got '%v' while expected '%v'", res, arr[i:])
 		}
 	}
+
 }
